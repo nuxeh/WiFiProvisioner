@@ -641,7 +641,7 @@ void WiFiProvisioner::handleRootRequest() {
   client.write_P(index_html12, strlen_P(index_html12));
   client.print(showResetField);
   client.write_P(index_html13, strlen_P(index_html13));
-  client_clear(&client);
+  client_clear(client);
   client.stop();
 }
 
@@ -681,7 +681,7 @@ void WiFiProvisioner::handleUpdateRequest() {
   sendHeader(client, 200, "application/json", measureJson(doc));
   serializeJson(doc, client);
 
-  client_clear(&client);
+  client_clear(client);
   client.stop();
 }
 
@@ -831,7 +831,7 @@ void WiFiProvisioner::sendBadRequestResponse() {
   WIFI_PROVISIONER_DEBUG_LOG(WIFI_PROVISIONER_LOG_WARN,
                              "Sent 400 Bad Request response to client");
 
-  client_clear(&client);
+  client_clear(client);
   client.stop();
 }
 
@@ -848,7 +848,7 @@ void WiFiProvisioner::handleSuccesfulConnection() {
   sendHeader(client, 200, "application/json", measureJson(doc));
 
   serializeJson(doc, client);
-  client_clear(&client);
+  client_clear(client);
   client.stop();
 }
 
@@ -868,7 +868,7 @@ void WiFiProvisioner::handleUnsuccessfulConnection(const char *reason) {
   sendHeader(client, 200, "application/json", measureJson(doc));
 
   serializeJson(doc, client);
-  client_clear(&client);
+  client_clear(client);
   client.stop();
 
   WiFi.disconnect(false, true);
@@ -893,6 +893,6 @@ void WiFiProvisioner::handleResetRequest() {
 
   sendHeader(client, 200, "text/html", 0);
 
-  client_clear(&client);
+  client_clear(client);
   client.stop();
 }
