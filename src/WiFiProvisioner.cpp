@@ -136,6 +136,17 @@ void sendHeader(WiFiClient &client, int statusCode, const char *contentType,
   client.println();
 }
 
+/**
+ * @brief Clears receieve buffers in client.
+ *
+ * client.clear() seems to be missing in some versions of Arduino ESP32 Core
+ */
+void client_clear() {
+  while(client.available()) {
+    client.read();
+  }
+}
+
 } // namespace
 
 /**
@@ -627,7 +638,7 @@ void WiFiProvisioner::handleRootRequest() {
   client.write_P(index_html12, strlen_P(index_html12));
   client.print(showResetField);
   client.write_P(index_html13, strlen_P(index_html13));
-  client.clear();
+  client_clear();
   client.stop();
 }
 
@@ -667,7 +678,7 @@ void WiFiProvisioner::handleUpdateRequest() {
   sendHeader(client, 200, "application/json", measureJson(doc));
   serializeJson(doc, client);
 
-  client.clear();
+  client_clear();
   client.stop();
 }
 
@@ -817,7 +828,7 @@ void WiFiProvisioner::sendBadRequestResponse() {
   WIFI_PROVISIONER_DEBUG_LOG(WIFI_PROVISIONER_LOG_WARN,
                              "Sent 400 Bad Request response to client");
 
-  client.clear();
+  client_clear();
   client.stop();
 }
 
@@ -834,7 +845,7 @@ void WiFiProvisioner::handleSuccesfulConnection() {
   sendHeader(client, 200, "application/json", measureJson(doc));
 
   serializeJson(doc, client);
-  client.clear();
+  client_clear();
   client.stop();
 }
 
@@ -854,7 +865,7 @@ void WiFiProvisioner::handleUnsuccessfulConnection(const char *reason) {
   sendHeader(client, 200, "application/json", measureJson(doc));
 
   serializeJson(doc, client);
-  client.clear();
+  client_clear();
   client.stop();
 
   WiFi.disconnect(false, true);
@@ -879,6 +890,6 @@ void WiFiProvisioner::handleResetRequest() {
 
   sendHeader(client, 200, "text/html", 0);
 
-  client.clear();
+  client_clear();
   client.stop();
 }
